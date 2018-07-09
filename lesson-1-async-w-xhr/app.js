@@ -8,5 +8,31 @@
         e.preventDefault();
         responseContainer.innerHTML = '';
         searchedForText = searchField.value;
+        const unsplashRequest = new XMLHttpRequest();
+        unsplashRequest.open('GET', `https://api.unsplash.com/search/photos?page=1&query=${searchedForText}`);
+        unsplashRequest.onload = addImage;
+        unsplashRequest.setRequestHeader('Authorization', ' Client-ID 27b529238b018ac5df2e09a6358999eb02523f94f8e8a5e0bd773b0ecf7f1ae5')
+        unsplashRequest.send()
+        function addImage() {
+          let htmlContent = '';
+          const data = JSON.parse(this.responseText);
+
+          if (data && data.results && data.results[0]) {
+          const firstImage = data.results[0];
+          htmlContent = `<figure>
+            <img src="${firstImage.urls.regular}" alt="${searchedForText}">
+            <figcaption>${searchedForText} by ${firstImage.user.name}</figcaption>
+          </figure>`;
+        }
+          else {
+            htmlContent = '<div class="error-no-image">No images available</div>';
+          }
+
+          responseContainer.insertAdjacentHTML('afterbegin', htmlContent);
+
+        };
+
     });
+
+
 })();
